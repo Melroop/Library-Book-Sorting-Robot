@@ -1,9 +1,11 @@
 r = UR3();
 q = zeros(1,6);
 rfkine = r.model.fkine(q);
-X = rfkine(1:3,4);
-
+rfkineT = rfkine.T
+X = rfkineT(1,4);
+Y = rfkineT(2,4);
+Z = rfkineT(3,4);
 hold on
 
-s = PlaceObject('barcodescannercolored.ply', [X,Y,Z]);
+s = PlaceObject('barcodescannercolored.ply', [X,Y,Z-0.05]);
 
