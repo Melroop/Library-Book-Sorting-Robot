@@ -3,9 +3,9 @@ close all;
 axis([-1,1,-1,1,0,1.5]);
 hold on;
 
-% ur3 = UR3;
+ur3 = UR3;
 crb = CRB15000;
-crb.model.teach();
+% crb.model.teach();
 
 % qlim - -0.05 to -0.01
 qOpen = -0.05;

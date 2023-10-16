@@ -22,7 +22,7 @@ function environment()
     center = mean(v);
     
     % Translate the model to the desired coordinates [0, 1, 0]
-    translation = [0, 0, 0];
+    translation = [0, 1.5, 0];
     v = v - center + translation;
     
     % Plot the PLY model
