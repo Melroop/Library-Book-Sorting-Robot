@@ -1,10 +1,15 @@
 close all;
 
-axis([-0.3,0.3,-0.3,0.3,-0.3,0.3]);
+% axis([-0.3,0.3,-0.3,0.3,-0.3,0.3]);
 hold on;
 
+crb = CRB15000;
+
 left = JGPLeft;
+left.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(-pi/2);
+
 right = JGPRight;
+right.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
 
 % qlim - -0.05 to -0.01
 qOpen = -0.05;
