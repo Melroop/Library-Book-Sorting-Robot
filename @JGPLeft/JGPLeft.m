@@ -23,7 +23,7 @@ classdef JGPLeft < RobotBaseClass
             link(1) = Link([pi     0       0       pi/2    1]); % PRISMATIC Link
             
             % qlim
-            link(1).qlim = [-0.05 -0.01];
+            link(1).qlim = [0.01 0.05];
             
             self.model = SerialLink(link,'name',self.name);
         end
