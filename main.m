@@ -28,8 +28,13 @@ classdef main < handle
             environment();
             
             %% Robot Arms Setup
+            % Initialise robot arms
 %             ur3 = UR3;
             crb = CRB15000;
+            
+            % Update robot arms base
+%             ur3.model.base = transl(0, -0.25, 0);
+            crb.model.base = transl(0, 0.25, 0);
             
             %% Gripper Setup          
             leftJGP = JGPLeft;
@@ -43,7 +48,7 @@ classdef main < handle
             position2 = [0.2,0.8,0.4];
             
             pause(5)
-            
+
             % moveCRB(robot,leftGripper,rightGripper,position,pose,gripperToggle)
                 % pose == 1 > Down, pose == 2 > Forward, pose == 3 > Backward,
                 % pose == 4 > Right, pose == 5 > Left

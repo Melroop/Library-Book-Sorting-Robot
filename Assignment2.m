@@ -3,9 +3,16 @@ close all;
 axis([-1,1,-1,1,0,1.5]);
 hold on;
 
-ur3 = UR3;
+% ur3 = UR3;
 crb = CRB15000;
-crb.model.teach();
+% crb.model.teach();
+
+q0 = crb.model.getpos();
+XYZ = transl(crb.model.fkine(q0))
+XYZ(1,1) = XYZ(1,1) + 0.5
+
+q1 = crb.model.ikcon(transl(XYZ));
+crb.model.animate(q1);
 
 % qlim - -0.05 to -0.01
 qOpen = -0.05;
