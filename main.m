@@ -21,7 +21,7 @@ classdef main < handle
             set(0,'DefaultFigureWindowStyle','normal')
             
             % Whole Environment Axis
-            axis([-1,1,-1,1,0,1.5]);     
+            axis([-1,1,-1,1,0,1.5]);
             hold on;
             
             %% Safe Workspace Environment Setup
@@ -29,7 +29,7 @@ classdef main < handle
             
             %% Robot Arms Setup
 %             ur3 = UR3;
-            crb = CRB15000;        
+            crb = CRB15000;
             
             %% Gripper Setup          
             leftJGP = JGPLeft;
@@ -39,13 +39,18 @@ classdef main < handle
             rightJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
 
             %% Moving CRB15000
-            position = [0.2,0.8,0.4];
-
+            position1 = [-0.2,-0.8,0.4];
+            position2 = [0.2,0.8,0.4];
+            
+            pause(5)
+            
             % moveCRB(robot,leftGripper,rightGripper,position,pose,gripperToggle)
                 % pose == 1 > Down, pose == 2 > Forward, pose == 3 > Backward,
                 % pose == 4 > Right, pose == 5 > Left
                 % gripperToggle == 0 > closing, gripperToggle == 1 > opening
-            moveCRB(crb, leftJGP, rightJGP, position, 1, 1);
+            moveCRB(crb, leftJGP, rightJGP, position1, 5, 0);
+            moveCRB(crb, leftJGP, rightJGP, position2, 4, 1);
+
             
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
