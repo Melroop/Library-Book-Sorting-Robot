@@ -1,5 +1,5 @@
 classdef JGPRight < RobotBaseClass
-    %% LinearUR3 UR5 on a non-standard linear rail created by a student
+    %% JGP-P 80-1 Universal Gripper by Schunk - Right Side
 
     properties(Access = public)              
         plyFileNameStem = 'JGPRight';
@@ -22,7 +22,7 @@ classdef JGPRight < RobotBaseClass
             % Create the UR3 model mounted on a linear rail
             link(1) = Link([pi     0       0       pi/2    1]); % PRISMATIC Link
             
-            % qlim
+            % Incorporate joint limits
             link(1).qlim = [-0.05 -0.01];
             
             self.model = SerialLink(link,'name',self.name);
