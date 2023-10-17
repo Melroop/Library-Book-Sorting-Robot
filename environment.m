@@ -43,7 +43,18 @@ function environment()
     % 
     % axis([xCenter - 5, xCenter + 5, yCenter - 5, yCenter + 5, zCenter - 5, zCenter + 5]);
     
-    %PlaceObject('book.ply', [1.5,1.5,0])
+    PlaceObject('BlueBook.ply', [1.5,1.5,0])
+
+    % Book
+    book1 = PlaceObject('BlueBook.ply', [0,0,0]);
+    book1vert = [get(book1,'Vertices'), ones(size(get(book1,'Vertices'),1),1)];
+    book1vert(:,1) = book1vert(:,1) * 4;  % scale X by 4
+    book1vert(:,2) = book1vert(:,2) * 2;  % scale Y by 2
+    book1vert(:,3) = book1vert(:,3) * 1.5;  % scale Z by 1.5
+    book1vert(:,2) = book1vert(:,1) - 3.8;  % set X coordinate to -3.8
+    book1vert(:,2) = book1vert(:,2) - 3.8;  % set Y coordinate to -3.8
+    book1vert(:,3) = book1vert(:,3) - 1;  % set Z coordinate to -1
+    set(book1,'Vertices',book1vert(:,1:3))
     
     % hold off;
 end
