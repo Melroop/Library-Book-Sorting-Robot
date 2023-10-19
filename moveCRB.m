@@ -1,14 +1,14 @@
-function moveCRB(robot,leftGripper,rightGripper,position,pose,gripperToggle)
+function moveCRB(robot,leftGripper,rightGripper,position,gripperOrientation,gripperToggle)
     %% Setup
-    steps1 = 50;
-    steps2 = 100;
+    steps1 = 50;        % Gripper
+    steps2 = 100;       % Arm Movements
     
     % Gripper positions
     qOpen = -0.05;
     qClose = -0.01;
     gripperZOffset = 0.12;
 
-    % Poses
+    % Gripper orientations (pose)
     poseDown = trotx(deg2rad(180));
     poseForward = troty(deg2rad(90));
     poseBackward = troty(deg2rad(-90));
@@ -16,15 +16,15 @@ function moveCRB(robot,leftGripper,rightGripper,position,pose,gripperToggle)
     poseLeft = trotx(deg2rad(90)) * trotz(deg2rad(90));
     
     % Update pose
-    if pose == 1
+    if gripperOrientation == 1
         finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseDown;
-    elseif pose == 2
+    elseif gripperOrientation == 2
         finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseForward;
-    elseif pose == 3
+    elseif gripperOrientation == 3
         finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseBackward;
-    elseif pose == 4
+    elseif gripperOrientation == 4
         finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseRight;
-    elseif pose == 5
+    elseif gripperOrientation == 5
         finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseLeft;
     end
 
@@ -56,25 +56,34 @@ function moveCRB(robot,leftGripper,rightGripper,position,pose,gripperToggle)
         elseif gripperToggle == 1
             leftGripper.model.animate(qClose);                                                              
             rightGripper.model.animate(qClose);
-        end
-        
-        drawnow();
-        pause(0)
-    end
-
-    % Gripper closing or opening
-    for i = 1:steps1
-        % animate gripper depending on input
-        if gripperToggle == 0
-            leftGripper.model.animate(qClosing(i,:));
-            rightGripper.model.animate(qClosing(i,:));
-        elseif gripperToggle == 1
-            leftGripper.model.animate(qOpening(i,:));
-        rightGripper.model.animate(qOpening(i,:));
+        elseif gripperToggle == 2
+            leftGripper.model.animate(qClose);                                                              
+            rightGripper.model.animate(qClose);
+        elseif gripperToggle == 3
+            leftGripper.model.animate(qOpen);                                                              
+            rightGripper.model.animate(qOpen);
         end
         
         drawnow();
         pause(0)
     end
     
+    % Gripper closing or opening
+    if gripperToggle == 0
+        for i = 1:steps1
+            leftGripper.model.animate(qClosing(i,:));
+            rightGripper.model.animate(qClosing(i,:));
+
+            drawnow();
+            pause(0)
+        end
+    elseif gripperToggle == 1
+        for i = 1:steps1
+            leftGripper.model.animate(qOpening(i,:));
+            rightGripper.model.animate(qOpening(i,:));
+
+            drawnow();
+            pause(0)
+        end
+    end
 end
