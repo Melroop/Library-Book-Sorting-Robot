@@ -1,40 +1,57 @@
-function moveCRB(robot,leftGripper,rightGripper,position,gripperOrientation,gripperToggle)
+function moveCRB(robot,leftGripper,rightGripper,position,bookObject,gripperOrientation,gripperToggle,bookToggle)
     %% Setup
     steps1 = 50;        % Gripper
     steps2 = 100;       % Arm Movements
     
     % Gripper positions
-    qOpen = -0.05;
+    qOpen = -0.02;
     qClose = -0.01;
-    gripperZOffset = 0.12;
+    gripperOffset = 0.08;
+
+    bookVert = get(bookObject,'Vertices'); % Get ply vertices to be updated
 
     % Gripper orientations (pose)
     poseDown = trotx(deg2rad(180));
     poseForward = troty(deg2rad(90));
     poseBackward = troty(deg2rad(-90));
     poseRight = trotx(deg2rad(-90)) * trotz(deg2rad(-90));
-    poseLeft = trotx(deg2rad(90)) * trotz(deg2rad(90));
+    poseLeft = trotx(deg2rad(90));
     
     % Update pose
     if gripperOrientation == 1
-        finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseDown;
+        finalPose = transl(position(1),position(2),position(3)+gripperOffset) * poseDown;
     elseif gripperOrientation == 2
-        finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseForward;
+        finalPose = transl(position(1)-gripperOffset,position(2),position(3)) * poseForward;
     elseif gripperOrientation == 3
-        finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseBackward;
+        finalPose = transl(position(1)+gripperOffset,position(2),position(3)) * poseBackward;
     elseif gripperOrientation == 4
-        finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseRight;
+        finalPose = transl(position(1),position(2)-gripperOffset,position(3)) * poseRight;
     elseif gripperOrientation == 5
-        finalPose = transl(position(1),position(2),position(3)+gripperZOffset) * poseLeft;
+        finalPose = transl(position(1),position(2)+gripperOffset,position(3)) * poseLeft;
     end
 
     % Gripper trajectory
     qClosing = jtraj(qOpen,qClose,steps1); 
     qOpening = jtraj(qClose,qOpen,steps1);
+    
+    % Robot guess positions
+    qBook = [0.4987, 1.6456, -0.3844, -1.1469, 1.6955, 0.6597];
+    qScan = [0, 0.6912, 0.7575, 2.1363, 0.1885, 0];
+    qShelf = [0, 0.6912, 0.7575, 2.1363, 0.1885, 0];
 
     % Robot positions
     qStart = robot.model.getpos();
-    qFinal = robot.model.ikcon(finalPose);
+    if gripperOrientation == 5
+        qFinal = robot.model.ikcon(finalPose, qBook);
+    elseif gripperOrientation == 4
+        qFinal = robot.model.ikcon(finalPose);
+    elseif gripperOrientation == 3
+        qFinal = robot.model.ikcon(finalPose);
+    elseif gripperOrientation == 2
+        qFinal = robot.model.ikcon(finalPose);
+    elseif gripperOrientation == 1
+        qFinal = robot.model.ikcon(finalPose, qScan);
+    end
 
     % Robot trajectory
     qTraj = jtraj(qStart,qFinal,steps2);
@@ -62,6 +79,17 @@ function moveCRB(robot,leftGripper,rightGripper,position,gripperOrientation,grip
         elseif gripperToggle == 3
             leftGripper.model.animate(qOpen);                                                              
             rightGripper.model.animate(qOpen);
+        end
+
+        % move book
+        if bookToggle == 1
+            endEffectorPos = robot.model.fkine(robot.model.getpos());                       % Get end effector position
+            newBookPose = transl(endEffectorPos);                                           % Create translation vector new position
+            oldBookPose = [finalPose(1,4) finalPose(2,4) finalPose(3,4)];                   % Create translation vector old position
+            transformVector = newBookPose - oldBookPose;                                    % Get the new transform vector
+            movingTransform = transl(transformVector);                                      % Create translation matrix        
+            newBookVert = (movingTransform * [bookVert, ones(size(bookVert, 1),1)]')';      % Multiply all vertices by transformation matrix
+            set(bookObject,'Vertices',newBookVert(:,1:3));                                  % Update brick
         end
         
         drawnow();
