@@ -33,18 +33,23 @@ classdef main < handle
             book1Scan = [0.65,0.4,0.8];
             book1Shelf = [0.25,1.05,1.5];
             
-            % book2Stack = [0,0,0];
-            % book2Scan = [0,0,0];
-            % book2Shelf = [0,0,0];
+            book2Stack = [0,0,0];
+            book2Scan = [0,0,0];
+            book2Shelf = [0,0,0];
 
             % book3Stack = [0,0,0];
             % book3Scan = [0,0,0];
             % book3Shelf = [0,0,0];
+            
+            book1 = Book;
+            book1.model.base = transl(book1Stack(1,1),book1Stack(1,2),book1Stack(1,3));
+            book1.model.animate(0);
 
-            % Book 1
-            book1 = PlaceObject('Bluebook.ply', [book1Stack(1,1),book1Stack(1,2),book1Stack(1,3)]);
-            book1Vert = [get(book1,'Vertices'), ones(size(get(book1,'Vertices'),1),1)];
-            set(book1,'Vertices',book1Vert(:,1:3))
+            book2 = Book;
+            book2.model.base = transl(book2Stack(1,1),book2Stack(1,2),book2Stack(1,3));
+            book2.model.animate(0);
+
+            
             
             %% Robot Arms Setup
             % Initialise robot arms
@@ -56,13 +61,14 @@ classdef main < handle
             crb.model.base = transl(0.15, 0.5, 0.95);
 
             % Re-plot robot arms
-            q0ur3 = ur3.model.getpos();
+            q0ur3 = deg2rad([0,-90,-90,0,90,0]);
             q0crb = crb.model.getpos();
             ur3.model.animate(q0ur3);
             crb.model.animate(q0crb);
 
 %             % Teach Test
 %             crb.model.teach(q0crb);
+%             ur3.model.teach(q0ur3);
             
             %% Gripper Setup          
             leftJGP = JGPLeft;
@@ -72,7 +78,7 @@ classdef main < handle
             rightJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
 
             %% Moving CRB15000
-            % moveCRB(robot,leftGripper,rightGripper,position,gripperOrientation,gripperToggle,bookToggle)
+            % moveCRB(robot,leftGripper,rightGripper,finalPosition,book,gripperOrientation,gripperToggle,bookToggle)
                 % gripperOrientation:
                     % 1 = Down, 2 = Forward, 3 = Backward, 4 = Right, 5 = Left
                 % gripperToggle: 
@@ -81,12 +87,14 @@ classdef main < handle
                     % 0 = not moving book, 1 = moving book
 
             % Book 1
-            moveCRB(crb, leftJGP, rightJGP, book1Stack, book1, 5, 0, 0);
-            pause(5)
-            moveCRB(crb, leftJGP, rightJGP, book1Scan, book1, 1, 2, 1);
-            pause(5)
-            moveCRB(crb, leftJGP, rightJGP, book1Shelf, book1, 4, 1, 1);
-            pause(5)
+            moveCRB(crb, leftJGP, rightJGP, book1Stack, book1, 5, 0, 0);    % Pickup
+            pause(2)
+            moveCRB(crb, leftJGP, rightJGP, book1Scan, book1, 1, 2, 1);     % Scan
+            pause(2)
+            moveCRB(crb, leftJGP, rightJGP, book1Shelf, book1, 4, 1, 1);    % Place
+            pause(2)
+
+            % Book 2
             
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
