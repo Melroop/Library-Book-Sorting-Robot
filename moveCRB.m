@@ -1,4 +1,4 @@
-function moveCRB(robot,leftGripper,rightGripper,position,bookObject,gripperOrientation,gripperToggle,bookToggle)
+function moveCRB(robot,leftGripper,rightGripper,initialBookPosition, finalPosition,bookObject,gripperOrientation,gripperToggle,bookToggle)
     %% Setup
     steps1 = 50;        % Gripper
     steps2 = 100;       % Arm Movements
@@ -7,7 +7,11 @@ function moveCRB(robot,leftGripper,rightGripper,position,bookObject,gripperOrien
     qOpen = -0.02;
     qClose = -0.01;
     gripperOffset = 0.08;
-
+    
+    % Book
+    initPos = initialBookPosition;
+    initOri = eye(3);
+    initPose = [initOri, initPos'; 0, 0, 0, 1];
     bookVert = get(bookObject,'Vertices'); % Get ply vertices to be updated
 
     % Gripper orientations (pose)
@@ -19,15 +23,15 @@ function moveCRB(robot,leftGripper,rightGripper,position,bookObject,gripperOrien
     
     % Update pose
     if gripperOrientation == 1
-        finalPose = transl(position(1),position(2),position(3)+gripperOffset) * poseDown;
+        finalPose = transl(finalPosition(1),finalPosition(2),finalPosition(3)+gripperOffset) * poseDown;
     elseif gripperOrientation == 2
-        finalPose = transl(position(1)-gripperOffset,position(2),position(3)) * poseForward;
+        finalPose = transl(finalPosition(1)-gripperOffset,finalPosition(2),finalPosition(3)) * poseForward;
     elseif gripperOrientation == 3
-        finalPose = transl(position(1)+gripperOffset,position(2),position(3)) * poseBackward;
+        finalPose = transl(finalPosition(1)+gripperOffset,finalPosition(2),finalPosition(3)) * poseBackward;
     elseif gripperOrientation == 4
-        finalPose = transl(position(1),position(2)-gripperOffset,position(3)) * poseRight;
+        finalPose = transl(finalPosition(1),finalPosition(2)-gripperOffset,finalPosition(3)) * poseRight;
     elseif gripperOrientation == 5
-        finalPose = transl(position(1),position(2)+gripperOffset,position(3)) * poseLeft;
+        finalPose = transl(finalPosition(1),finalPosition(2)+gripperOffset,finalPosition(3)) * poseLeft;
     end
 
     % Gripper trajectory
@@ -83,13 +87,18 @@ function moveCRB(robot,leftGripper,rightGripper,position,bookObject,gripperOrien
 
         % move book
         if bookToggle == 1
-            endEffectorPos = robot.model.fkine(robot.model.getpos());                       % Get end effector position
-            newBookPose = transl(endEffectorPos);                                           % Create translation vector new position
-            oldBookPose = [finalPose(1,4) finalPose(2,4) finalPose(3,4)];                   % Create translation vector old position
-            transformVector = newBookPose - oldBookPose;                                    % Get the new transform vector
-            movingTransform = transl(transformVector);                                      % Create translation matrix        
-            newBookVert = (movingTransform * [bookVert, ones(size(bookVert, 1),1)]')';      % Multiply all vertices by transformation matrix
-            set(bookObject,'Vertices',newBookVert(:,1:3));                                  % Update brick
+            % endEffectorPos = robot.model.fkine(robot.model.getpos());                       % Get end effector position
+            % newBookPose = transl(endEffectorPos);                                           % Create translation vector new position
+            % oldBookPose = [finalPose(1,4) finalPose(2,4) finalPose(3,4)];                   % Create translation vector old position
+            % transformVector = newBookPose - oldBookPose;                                    % Get the new transform vector
+            % movingTransform = transl(transformVector);                                      % Create translation matrix        
+            % newBookVert = (movingTransform * [bookVert, ones(size(bookVert, 1),1)]')';      % Multiply all vertices by transformation matrix
+            % set(bookObject,'Vertices',newBookVert(:,1:3));                                  % Update brick
+
+            endEffectorPos = robot.model.fkine(robot.model.getpos()).T;                             % Get end effector position
+            bookTransform = endEffectorPos * inv(initPose);            % Calculate the transformation
+            newBookVert = (bookVert(:,1:3) * bookTransform(1:3,1:3)') + bookTransform(1:3,4)';   % New book vertices
+            set(bookObject,'Vertices',newBookVert(:,1:3));                                          % Update book model
         end
         
         drawnow();
