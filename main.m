@@ -80,6 +80,7 @@ classdef main < handle
             %% Moving Books
             % Book 1
                 % Scan
+            ur3scanning(ur3,book1Stack,q0ur3)
             moveCRB(crb, leftJGP, rightJGP, book1Stack, book1Shelf, book1); % Move Book
             pause(2)
 
