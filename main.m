@@ -50,7 +50,7 @@ classdef main < handle
             book3.model.base = transl(book3Stack(1,1),book3Stack(1,2),book3Stack(1,3));
             book3.model.animate(0);
             
-            
+            bookPositions = {book1Stack,book2Stack,book3Stack};
             %% Robot Arms Setup
             % Initialise robot arms
             ur3 = UR3;
@@ -80,17 +80,23 @@ classdef main < handle
             %% Moving Books
             % Book 1
                 % Scan
-            ur3scanning(ur3,book1Stack,q0ur3)
+            scanstatus = true;
+            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
+
             moveCRB(crb, leftJGP, rightJGP, book1Stack, book1Shelf, book1); % Move Book
             pause(2)
 
             % % Book 2
                 % Scan
+            scanstatus = true;
+            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
             moveCRB(crb, leftJGP, rightJGP, book2Stack, book2Shelf, book2); % Move Book
             pause(2)
 
             % % Book 3
                 % Scan
+            scanstatus = true;
+            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
             moveCRB(crb, leftJGP, rightJGP, book3Stack, book3Shelf, book3); % Move Book
             pause(2)
             
