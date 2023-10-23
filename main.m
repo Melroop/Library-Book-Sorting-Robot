@@ -29,17 +29,14 @@ classdef main < handle
 
             %% Plot Books
             % Book positions
-            book1Stack = [0.65,0.65,0.7];
-            book1Scan = [0.65,0.4,0.8];
-            book1Shelf = [0.25,1.05,1.5];
+            book1Stack = [0.65,0.65,0.90];
+            book1Shelf = [0.25,1.05,1.50];
             
-            book2Stack = [0,0,0];
-            book2Scan = [0,0,0];
-            book2Shelf = [0,0,0];
+            book2Stack = [0.65,0.60,0.90];
+            book2Shelf = [0.20,1.05,1.50];
 
-            % book3Stack = [0,0,0];
-            % book3Scan = [0,0,0];
-            % book3Shelf = [0,0,0];
+            book3Stack = [0.65,0.55,0.90];
+            book3Shelf = [0.25,1.05,2.05];
             
             book1 = Book;
             book1.model.base = transl(book1Stack(1,1),book1Stack(1,2),book1Stack(1,3));
@@ -49,6 +46,9 @@ classdef main < handle
             book2.model.base = transl(book2Stack(1,1),book2Stack(1,2),book2Stack(1,3));
             book2.model.animate(0);
 
+            book3 = Book;
+            book3.model.base = transl(book3Stack(1,1),book3Stack(1,2),book3Stack(1,3));
+            book3.model.animate(0);
             
             
             %% Robot Arms Setup
@@ -67,7 +67,7 @@ classdef main < handle
             crb.model.animate(q0crb);
 
 %             % Teach Test
-%             crb.model.teach(q0crb);
+            % crb.model.teach(q0crb);
 %             ur3.model.teach(q0ur3);
             
             %% Gripper Setup          
@@ -77,24 +77,21 @@ classdef main < handle
             rightJGP = JGPRight;
             rightJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
 
-            %% Moving CRB15000
-            % moveCRB(robot,leftGripper,rightGripper,finalPosition,book,gripperOrientation,gripperToggle,bookToggle)
-                % gripperOrientation:
-                    % 1 = Down, 2 = Forward, 3 = Backward, 4 = Right, 5 = Left
-                % gripperToggle: 
-                    % 0 = closing, 1 = opening, 2 = close, 3 = open
-                % bookToggle:
-                    % 0 = not moving book, 1 = moving book
-
+            %% Moving Books
             % Book 1
-            moveCRB(crb, leftJGP, rightJGP, book1Stack, book1, 5, 0, 0);    % Pickup
-            pause(2)
-            moveCRB(crb, leftJGP, rightJGP, book1Scan, book1, 1, 2, 1);     % Scan
-            pause(2)
-            moveCRB(crb, leftJGP, rightJGP, book1Shelf, book1, 4, 1, 1);    % Place
+                % Scan
+            moveCRB(crb, leftJGP, rightJGP, book1Stack, book1Shelf, book1); % Move Book
             pause(2)
 
-            % Book 2
+            % % Book 2
+                % Scan
+            moveCRB(crb, leftJGP, rightJGP, book2Stack, book2Shelf, book2); % Move Book
+            pause(2)
+
+            % % Book 3
+                % Scan
+            moveCRB(crb, leftJGP, rightJGP, book3Stack, book3Shelf, book3); % Move Book
+            pause(2)
             
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
