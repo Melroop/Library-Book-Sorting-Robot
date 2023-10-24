@@ -29,13 +29,13 @@ classdef main < handle
 
             %% Plot Books
             % Book positions
-            book1Stack = [0.65,0.65,0.90];
+            book1Stack = [0.60,0.60,0.74];
             book1Shelf = [0.25,1.05,1.50];
             
-            book2Stack = [0.65,0.60,0.90];
+            book2Stack = [0.60,0.55,0.74];
             book2Shelf = [0.20,1.05,1.50];
 
-            book3Stack = [0.65,0.55,0.90];
+            book3Stack = [0.60,0.50,0.74];
             book3Shelf = [0.25,1.05,2.05];
             
             book1 = Book;
@@ -57,8 +57,8 @@ classdef main < handle
             crb = CRB15000;
             
             % Update robot arms base on table
-            ur3.model.base = transl(0, 0.05, 0.95);
-            crb.model.base = transl(0.15, 0.5, 0.95);
+            ur3.model.base = transl(0.15, 0.15, 0.95);
+            crb.model.base = transl(0.15, 0.50, 0.95);
 
             % Re-plot robot arms
             q0ur3 = deg2rad([0,-90,-90,0,90,0]);
@@ -70,12 +70,18 @@ classdef main < handle
             % crb.model.teach(q0crb);
 %             ur3.model.teach(q0ur3);
             
-            %% Gripper Setup          
+            %% CRB Gripper Setup          
             leftJGP = JGPLeft;
             leftJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(-pi/2);
             
             rightJGP = JGPRight;
             rightJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
+
+            leftJGP.model.animate(-0.02);
+            rightJGP.model.animate(-0.02);
+
+            %% UR3 Scanner Setup
+            
 
             %% Moving Books
             % Book 1
