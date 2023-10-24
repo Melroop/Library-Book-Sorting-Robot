@@ -20,7 +20,7 @@ classdef Book < RobotBaseClass
     %% Create the robot model
         function CreateModel(self)   
             % Create the UR3 model mounted on a linear rail
-            link(1) = Link('d',0.265,'a',0,'alpha',0,'qlim',deg2rad([0 0]), 'offset',0);
+            link(1) = Link('d',0.001,'a',0,'alpha',0,'qlim',deg2rad([0 0]), 'offset',0);
             
             % Incorporate joint limits
             link(1).qlim = [0 0];
