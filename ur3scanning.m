@@ -2,6 +2,8 @@ function ur3scanning(ur3,q0ur3,scanstatus,bookPositions)
 
 hold on
 
+[numRows, numCols] = size(bookPositions);
+
 rfkine = ur3.model.fkine(q0ur3);
 rfkineT = rfkine.T;
 X0 = rfkineT(1, 4);
@@ -20,8 +22,8 @@ scannerinitPosition = [X0 Y0 Z0];
 scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
 
 % Iterate through all the books, one after another
-for i = 1:length(bookPositions)
-    bookinitPosition = bookPositions{i};
+for i = 1:numCols
+    bookinitPosition = bookPositions(i,:);
     bookinitOrientation = eye(3);
     bookinitPose = [bookinitOrientation, bookinitPosition'; 0, 0, 0, 1];
 

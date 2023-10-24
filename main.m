@@ -28,29 +28,47 @@ classdef main < handle
             safetyworkspace();
 
             %% Plot Books
+            % Books
+            book = cell(11);
+            for i = 1:11
+                book{i} = Book; 
+            end
+            
             % Book positions
-            book1Stack = [0.60,0.60,0.74];
-            book1Shelf = [0.25,1.05,1.50];
-            
-            book2Stack = [0.60,0.55,0.74];
-            book2Shelf = [0.20,1.05,1.50];
+            bookStack = [
+                0.60,0.61,0.74;
+                0.60,0.55,0.74;
+                0.60,0.49,0.74;
+                0.60,0.43,0.74;
+                0.60,0.37,0.74;
+                0.60,0.31,0.74;
+                0.60,0.25,0.74;
+                0.60,0.19,0.74;
+                0.60,0.13,0.74;
+                0.60,0.07,0.74;
+                0.60,0.01,0.74;
+                ];
 
-            book3Stack = [0.60,0.50,0.74];
-            book3Shelf = [0.25,1.05,2.05];
+            bookShelf = [
+                0.26,1.05,1.50;
+                0.20,1.05,1.50;
+                0.14,1.05,1.50;
+                0.08,1.05,1.50;
+                0.02,1.05,1.50;
+                0.26,1.05,2.05;
+                0.20,1.05,2.05;
+                0.14,1.05,2.05;
+                0.08,1.05,2.05;
+                0.02,1.05,2.05;
+                -0.04,1.05,2.05;
+                ];
             
-            book1 = Book;
-            book1.model.base = transl(book1Stack(1,1),book1Stack(1,2),book1Stack(1,3));
-            book1.model.animate(0);
-
-            book2 = Book;
-            book2.model.base = transl(book2Stack(1,1),book2Stack(1,2),book2Stack(1,3));
-            book2.model.animate(0);
-
-            book3 = Book;
-            book3.model.base = transl(book3Stack(1,1),book3Stack(1,2),book3Stack(1,3));
-            book3.model.animate(0);
+            % Update book base
+            for i = 1:11
+                book{i}.model.base = transl(bookStack(i,1),bookStack(i,2),bookStack(i,3));
+                book{i}.model.animate(0);
+            end
             
-            bookPositions = {book1Stack,book2Stack,book3Stack};
             %% Robot Arms Setup
             % Initialise robot arms
             ur3 = UR3;
@@ -81,30 +99,97 @@ classdef main < handle
             rightJGP.model.animate(-0.02);
 
             %% UR3 Scanner Setup
-            
+
 
             %% Moving Books
             % Book 1
                 % Scan
             scanstatus = true;
-            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
+            ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(1,:), bookShelf(1,:), book{1}); 
+            pause(1)
 
-            moveCRB(crb, leftJGP, rightJGP, book1Stack, book1Shelf, book1); % Move Book
-            pause(2)
-
-            % % Book 2
+            % Book 2
                 % Scan
-            scanstatus = true;
-            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
-            moveCRB(crb, leftJGP, rightJGP, book2Stack, book2Shelf, book2); % Move Book
-            pause(2)
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(2,:), bookShelf(2,:), book{2});
+            pause(1)
 
-            % % Book 3
+            % Book 3
                 % Scan
-            scanstatus = true;
-            ur3scanning(ur3,q0ur3,scanstatus,bookPositions);
-            moveCRB(crb, leftJGP, rightJGP, book3Stack, book3Shelf, book3); % Move Book
-            pause(2)
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(3,:), bookShelf(3,:), book{3});
+            pause(1)
+
+            % Book 4
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(4,:), bookShelf(4,:), book{4});
+            pause(1)
+
+            % Book 5
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(5,:), bookShelf(5,:), book{5});
+            pause(1)
+
+            % Book 6
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(6,:), bookShelf(6,:), book{6});
+            pause(1)
+
+            % Book 7
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(7,:), bookShelf(7,:), book{7});
+            pause(1)
+
+            % Book 8
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(8,:), bookShelf(8,:), book{8});
+            pause(1)
+
+            % Book 9
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(9,:), bookShelf(9,:), book{9});
+            pause(1)
+
+            % Book 10
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(10,:), bookShelf(10,:), book{10});
+            pause(1)
+
+            % Book 11
+                % Scan
+%             scanstatus = true;
+%             ur3scanning(ur3,q0ur3,scanstatus,bookStack);
+            % Move Book
+            moveCRB(crb, leftJGP, rightJGP, bookStack(11,:), bookShelf(11,:), book{11});
+            pause(1)
             
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
