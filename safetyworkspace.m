@@ -3,15 +3,15 @@ function safetyworkspace()
     clf;
     clear all; 
     
-    % axis([-2,2,-2,2,0,3.5]);
+    axis([-5,5,-10,5,0,4]);
     hold on;
     
-    % xlabel ('X');
-    % ylabel ('Y');
-    % zlabel ('Z');
+    xlabel ('X');
+    ylabel ('Y');
+    zlabel ('Z');
 
     % Carpet
-    % surf([-2,-2;2,2],[-2,2;-2,2],[0.0,0.0;0.0,0.0],'CData',imread('carpet.jpg'),'FaceColor','texturemap');
+    surf([-4.5,-4.5;4,4],[-9,3.5;-9,3.5],[0.0,0.0;0.0,0.0],'CData',imread('carpet.jpg'),'FaceColor','texturemap');
 
     % Library
     library = PlaceObject('Librarybase.ply',[0,0,0]);
