@@ -1,7 +1,7 @@
 function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,book)
     %% Setup
-    steps1 = 50;        
-    steps2 = 100;       
+    steps1 = 25;        
+    steps2 = 50;       
     
     % Gripper positions
     qOpen = -0.02;
@@ -15,11 +15,10 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     qOpening = jtraj(qClose,qOpen,steps1);
     
     % Robot positions
-    posePickupHover = transl(pickupPosition(1),pickupPosition(2),pickupPosition(3)+bookOffset) * trotx(deg2rad(180))
+    poseBookOver = transl(pickupPosition(1),pickupPosition(2),pickupPosition(3)+bookOffset) * trotx(deg2rad(180));
     posePickup = transl(pickupPosition(1),pickupPosition(2),pickupPosition(3)+gripperOffset) * trotx(deg2rad(180));
-    posePlaceHover1 = transl(placePosition(1),placePosition(2)-shelfOffset,placePosition(3)) * trotx(deg2rad(-90)) * trotz(deg2rad(-90));
+    poseShelfOut = transl(placePosition(1),placePosition(2)-shelfOffset,placePosition(3)) * trotx(deg2rad(-90)) * trotz(deg2rad(-90));
     posePlace = transl(placePosition(1),placePosition(2)-gripperOffset,placePosition(3)) * trotx(deg2rad(-90)) * trotz(deg2rad(-90));
-    posePlaceHover2 = transl(placePosition(1),placePosition(2)-bookOffset,placePosition(3)) * trotx(deg2rad(-90)) * trotz(deg2rad(-90));
     
     % Robot guess positions
     qBook = [-0.1995, 0.8009, 0.4641, -0.2992, 0.3491, 0];
@@ -27,29 +26,30 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
 
     % Robot positions
     qStart = robot.model.getpos();
-    qPickupHover = robot.model.ikcon(posePickupHover, qBook);
-    qPickup = robot.model.ikcon(posePickup, qPickupHover);
-    qPlaceHover1 = robot.model.ikcon(posePlaceHover1, qShelf);
+    qBookOver = robot.model.ikcon(poseBookOver, qBook);
+    qPickup = robot.model.ikcon(posePickup, qBookOver);
     qMiddle = [0, -0.7854, 1.3090, 0, -0.5236, 0];
-    qPlace = robot.model.ikcon(posePlace, qPlaceHover1);
-    qPlaceHover2 = robot.model.ikcon(posePlaceHover2, qPlace);
+    qPlace = robot.model.ikcon(posePlace, qShelf);
+    qArmOut = robot.model.ikcon(poseShelfOut, qPlace);
 
     % Robot trajectory
-    trajPickupHover1 = jtraj(qStart,qPickupHover,steps2);
-    trajPickup = jtraj(qPickupHover,qPickup,steps1);
-    trajPickupHover2 = jtraj(qPickup,qPickupHover,steps1);
+    trajBookOver = jtraj(qStart,qBookOver,steps2);
+    trajPickup = jtraj(qBookOver,qPickup,steps2);
+    trajBookOut = jtraj(qPickup,qBookOver,steps2);
     
-    trajMiddle = jtraj(qPickupHover,qMiddle,steps2);
+    trajMiddle = jtraj(qBookOver,qMiddle,steps2);
 
-    trajPlaceHover1 = jtraj(qMiddle,qPlaceHover1,steps2);
-    trajPlace = jtraj(qPlaceHover1,qPlace,steps1);
-    trajPlaceHover2 = jtraj(qPlace,qPlaceHover2,steps1);
+    trajShelfOut = jtraj(qMiddle,qArmOut,steps2);
+    trajPlace = jtraj(qArmOut,qPlace,steps2);
+    trajArmOut = jtraj(qPlace,qArmOut,steps2);
+
+    trajStart = jtraj(qArmOut,qStart,steps2);
 
     %% Moving
-    % Pickup Hover 1
+    % Move arm over book
     for i = 1:steps2
         % update CRB
-        robot.model.animate(trajPickupHover1(i,:));
+        robot.model.animate(trajBookOver(i,:));
         % update gripper to end-effector
         leftGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(-pi/2);    
         rightGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(pi/2) * trotz(pi);
@@ -62,8 +62,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
 
     crbLogging(robot);
 
-    % Pickup
-    for i = 1:steps1
+    % Move arm to pickup book
+    for i = 1:steps2
         % update CRB
         robot.model.animate(trajPickup(i,:));
         % update gripper to end-effector
@@ -87,10 +87,10 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
         pause(0)
     end
 
-    % Pickup Hover 2
-    for i = 1:steps1
+    % Take book outside bin
+    for i = 1:steps2
         % update CRB
-        robot.model.animate(trajPickupHover2(i,:));
+        robot.model.animate(trajBookOut(i,:));
         % update gripper to end-effector
         leftGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(-pi/2);    
         rightGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(pi/2) * trotz(pi);
@@ -108,7 +108,7 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
 
     crbLogging(robot);
 
-    % Middle
+    % Move arm to middle position
     for i = 1:steps2
         % update CRB
         robot.model.animate(trajMiddle(i,:));
@@ -137,10 +137,10 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     crbLogging(robot);
 
 
-    % Shelf Hover 1
+    % Move arm outside shelf slot
     for i = 1:steps2
         % update CRB
-        robot.model.animate(trajPlaceHover1(i,:));
+        robot.model.animate(trajShelfOut(i,:));
         % update gripper to end-effector
         leftGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(-pi/2);    
         rightGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(pi/2) * trotz(pi);
@@ -165,8 +165,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
 
     crbLogging(robot);
 
-    % Shelf
-    for i = 1:steps1
+    % Place book on shelf
+    for i = 1:steps2
         % update CRB
         robot.model.animate(trajPlace(i,:));
         % update gripper to end-effector
@@ -195,10 +195,26 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
         pause(0)
     end
 
-    % Shelf Hover 2
-    for i = 1:steps1
+    % Move arm outside shelf
+    for i = 1:steps2
         % update CRB
-        robot.model.animate(trajPlaceHover2(i,:));
+        robot.model.animate(trajArmOut(i,:));
+        % update gripper to end-effector
+        leftGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(-pi/2);    
+        rightGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(pi/2) * trotz(pi);
+        leftGripper.model.animate(qOpen);
+        rightGripper.model.animate(qOpen);
+
+        drawnow();
+        pause(0)
+    end
+        
+    crbLogging(robot);
+
+    % Move arm back to starting position
+    for i = 1:steps2
+        % update CRB
+        robot.model.animate(trajStart(i,:));
         % update gripper to end-effector
         leftGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(-pi/2);    
         rightGripper.model.base = robot.model.fkine(robot.model.getpos()).T * trotx(pi/2) * trotz(pi);

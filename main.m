@@ -29,9 +29,10 @@ classdef main < handle
 
             %% Plot Books
             % Books
-            book = cell(11);
-            for i = 1:11
-                book{i} = Book;
+            numBooks = 11;
+            book = cell(numBooks);
+            for i = 1:numBooks
+                book{i} = Book; 
             end
 
             % Book positions
@@ -117,83 +118,11 @@ classdef main < handle
             scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
 
             %% Moving Books
-            % Book 1
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(1,:),scanner,verts,scannerinitPose);
-
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(1,:), bookShelf(1,:), book{1});
-            pause(1)
-
-            % Book 2
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(2,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(2,:), bookShelf(2,:), book{2});
-            pause(1)
-
-            % Book 3
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(3,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(3,:), bookShelf(3,:), book{3});
-            pause(1)
-
-            % Book 4
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(4,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(4,:), bookShelf(4,:), book{4});
-            pause(1)
-
-            % Book 5
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(5,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(5,:), bookShelf(5,:), book{5});
-            pause(1)
-
-            % Book 6
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(6,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(6,:), bookShelf(6,:), book{6});
-            pause(1)
-
-            % Book 7
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(7,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(7,:), bookShelf(7,:), book{7});
-            pause(1)
-
-            % Book 8
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(8,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(8,:), bookShelf(8,:), book{8});
-            pause(1)
-
-            % Book 9
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(9,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(9,:), bookShelf(9,:), book{9});
-            pause(1)
-
-            % Book 10
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(10,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(10,:), bookShelf(10,:), book{10});
-            pause(1)
-
-            % Book 11
-            % Scan
-            ur3scanning(ur3,q0ur3,bookStack(11,:),scanner,verts,scannerinitPose);
-            % Move Book
-            moveCRB(crb, leftJGP, rightJGP, bookStack(11,:), bookShelf(11,:), book{11});
-            pause(1)
+            for i = 1:numBooks
+                ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
+                moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
+                pause(1)
+            end
 
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
