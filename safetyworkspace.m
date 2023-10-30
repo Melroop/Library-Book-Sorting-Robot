@@ -16,6 +16,7 @@ function safetyworkspace()
     % Library
     % https://grabcad.com/library/tag/book
     % https://grabcad.com/library/bookshelf-65
+    % https://grabcad.com/library/safety-light-curtain-1
     % Library Walls, Bookshelves, EStop
     
     library = PlaceObject('Librarybase.ply',[0,0,0]);
@@ -38,6 +39,11 @@ function safetyworkspace()
     trolley = PlaceObject('Trolley.ply',[-0.15,0.0,0]);
     trolleyvert = [get(trolley,'Vertices'), ones(size(get(trolley,'Vertices'),1),1)];
     set(trolley,'Vertices',trolleyvert(:,1:3))
+
+    % Light Curtain
+    curtain = PlaceObject('Lightcurtain.ply',[0,0,0]);
+    curtainvert = [get(curtain,'Vertices'), ones(size(get(curtain,'Vertices'),1),1)];
+    set(curtain,'Vertices',curtainvert(:,1:3))
 
     % hold off;
 end
