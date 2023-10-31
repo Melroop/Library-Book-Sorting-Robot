@@ -1,63 +1,84 @@
-%% Quesiton 3
-% Joint Interpolation
-clear all
-close all
-clc
-set(0,'DefaultFigureWindowStyle','docked');
+function ur3scanningRMRC(ur3, q0ur3, bookStack, scanner, verts, scannerinitPose)
 
-% 3.1
-steps = 50;
-mdl_planar2;                                  % Load 2-Link Planar Robot
+    hold on
 
-% 3.2
-T1 = [eye(3) [1.5 1 0]'; zeros(1,3) 1];       % First pose
-T2 = [eye(3) [1.5 -1 0]'; zeros(1,3) 1];      % Second pose
+    [numRows, ~] = size(bookStack);
 
-% 3.3
-M = [1 1 zeros(1,4)];                         % Masking Matrix
+    rfkine = ur3.model.fkine(q0ur3);
+    rfkineT = rfkine.T;
+    X0 = rfkineT(1, 4);
+    Y0 = rfkineT(2, 4);
+    Z0 = rfkineT(3, 4);
+    disp('UR3 end effector pose: ');
+    disp(rfkine);
 
-% UPDATE: ikine function now has different syntax when entering
-% arguments into the function call. The argument must be prefaced by
-% its argument name. E.g. Initial Q Guess = 'q0', q & Mask = 'mask', m.
-q1 = p2.ikine(T1,'q0', [0 0], 'mask', M);                    % Solve for joint angles
-q2 = p2.ikine(T2, 'q0', [0 0], 'mask', M);                    % Solve for joint angles
-p2.plot(q1,'trail','r-');
-pause(3)
-% 3.4
-qMatrix = jtraj(q1,q2,steps);
-p2.plot(qMatrix,'trail','r-');
+    qBook1 = deg2rad([5, -163, -66, -45, 96, 0]);
+    cumulativeTime = 0;
 
-% 3.5: Resolved Motion Rate Control
-steps = 50;
+    % Iterate through all the books, one after another
+    for i = 1:numRows
+        bookinitPosition = bookStack(i, :);
+        bookinitPositionoffset = [0, -0.1, 0.25];
+        bookcompletePosition = bookinitPosition + bookinitPositionoffset;
+        bookinitOrientation = eye(3);
+        bookinitPose = [bookinitOrientation, bookcompletePosition'; 0, 0, 0, 1];
 
-% 3.6
-x1 = [1.5 1]';
-x2 = [1.5 -1]';
-deltaT = 0.05;                                        % Discrete time step
+        flipMatrix = trotx(pi);
 
-% 3.7
-x = zeros(2,steps);
-s = lspb(0,1,steps);                                 % Create interpolation scalar
-for i = 1:steps
-    x(:,i) = x1*(1-s(i)) + s(i)*x2;                  % Create trajectory in x-y plane
+        % Check if scanstatus is true and it's the current book's turn
+        % if scanstatus == true
+        steps = 95;
+
+        x1 = [X0; Y0; Z0; 0; 0; 0];  % Define the initial pose for RMRC
+        x2 = [bookcompletePosition'; 0; 0; 0] * flipMatrix;  % Define the final pose for RMRC
+        deltaT = 0.05;
+
+        x = zeros(6, steps);
+        s = lspb(0, 1, steps);
+        for j = 1:steps
+            x(:, j) = x1 * (1 - s(j)) + s(j) * x2;  % Create trajectory in 6D space
+        end
+
+        qMatrix = nan(steps, 6);
+        qMatrix(1, :) = q0ur3;
+
+        % Calculate the RMRC joint trajectory
+        for j = 1:steps - 1
+            xdot = (x(:, j + 1) - x(:, j)) / deltaT;  % Calculate velocity at discrete time step
+            J = ur3.model.jacob0(qMatrix(j, :));  % Get the Jacobian at the current state
+            J = J(1:6, :);  % Take all 6 rows (for a 6-DOF robot)
+            qdot = pinv(J) * xdot;  % Solve velocities via RMRC
+            qMatrix(j + 1, :) = qMatrix(j, :) + deltaT * qdot';  % Update next joint state
+        end
+
+        % Iterate through the RMRC joint trajectory and update the robot's position
+        for j = 1:size(qMatrix, 1)
+            % Update the robot's joint angles
+            ur3.model.animate(qMatrix(j, :));
+            drawnow();
+            pause(0.01);  % Add a small delay to slow down the animation
+
+            % Update the end effector pose
+            rposition = ur3.model.getpos();
+            disp('UR3 current joint state: ');
+            disp(rposition);
+            endEffectorPose = ur3.model.fkine(rposition).T;
+            disp('UR3 end effector pose: ');
+            disp(endEffectorPose);
+
+            % Update the scanner's position
+            scannerTransform = endEffectorPose * inv(scannerinitPose);  % Calculate the transformation
+            newVerts = (verts(:, 1:3) * scannerTransform(1:3, 1:3)') + scannerTransform(1:3, 4)';
+            set(scanner, 'Vertices', newVerts);
+        end
+
+        % End timing for the current book and calculate elapsed time
+        bookEndTime = toc(bookStartTime);
+        cumulativeTime = cumulativeTime + bookEndTime;
+
+        % Display the cumulative time for the current book
+        disp(['Cumulative Time for Book #', num2str(i), ': ', num2str(cumulativeTime), ' seconds']);
+        % % Set scanstatus to false after scanning
+        % scanstatus = false;
+    end
 end
-
-% 3.8
-qMatrix = nan(steps,2);
-
-% 3.9
-% UPDATE: ikine function now has different syntax when entering
-% arguments into the function call. The argument must be prefaced by
-% its argument name. E.g. Initial Q Guess = 'q0', q & Mask = 'mask', m.
-qMatrix(1,:) = p2.ikine(T1, 'q0', [0 0], 'mask', M);                 % Solve for joint angles
-
-% 3.10
-for i = 1:steps-1
-    xdot = (x(:,i+1) - x(:,i))/deltaT;                             % Calculate velocity at discrete time step
-    J = p2.jacob0(qMatrix(i,:));            % Get the Jacobian at the current state
-    J = J(1:2,:);                           % Take only first 2 rows
-    qdot = inv(J)*xdot;                             % Solve velocitities via RMRC
-    qMatrix(i+1,:) =  qMatrix(i,:) + deltaT*qdot';                   % Update next joint state
-end
-
-p2.plot(qMatrix,'trail','r-');
