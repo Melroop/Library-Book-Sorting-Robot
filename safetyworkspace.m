@@ -45,5 +45,10 @@ function safetyworkspace()
     curtainvert = [get(curtain,'Vertices'), ones(size(get(curtain,'Vertices'),1),1)];
     set(curtain,'Vertices',curtainvert(:,1:3))
 
+    % % Light Tower
+    % light = PlaceObject('LightTower.ply',[0,0,0]);
+    % lightvert = [get(light,'Vertices'), ones(size(get(light,'Vertices'),1),1)];
+    % set(light,'Vertices',lightvert(:,1:3))
+
     % hold off;
 end
