@@ -7,6 +7,11 @@
 %% Main file to call all the functions
 classdef main < handle
 
+    properties
+        eStopEnabled = false;  % Flag to indicate whether the E-Stop is enabled
+        recoveryActionCounter = 0;  % Counter for recovery actions
+    end
+
     methods
         function self = main()
             cla;
@@ -68,6 +73,35 @@ classdef main < handle
             for i = 1:11
                 book{i}.model.base = transl(bookStack(i,1),bookStack(i,2),bookStack(i,3));
                 book{i}.model.animate(0);
+            end
+
+            %% Implement an E-Stop
+            % Simulated E-Stop
+            disp('Press "e" to activate E-Stop. Two "r" presses are required to resume.');
+
+            while true
+                if main.self.eStopEnabled
+                    % Perform actions to stop robot motion (e.g., set joint velocities to zero)
+                else
+                    % Normal operation
+                    % Existing code for robot motion and tasks
+                end
+
+                % Check for E-Stop activation and recovery actions
+                if kbhit
+                    key = getkey;
+                    if key == 'e' && ~main.self.eStopEnabled
+                        main.self.eStopEnabled = true;  % Activate E-Stop
+                        disp('E-Stop activated. System is paused.');
+                    elseif key == 'r' && main.self.eStopEnabled
+                        main.self.recoveryActionCounter = main.self.recoveryActionCounter + 1;
+                        if main.self.recoveryActionCounter >= 2
+                            main.self.eStopEnabled = false;  % Deactivate E-Stop
+                            main.self.recoveryActionCounter = 0;  % Reset recovery action counter
+                            disp('E-Stop deactivated. System can now resume.');
+                        end
+                    end
+                end
             end
 
             %% Robot Arms Setup
