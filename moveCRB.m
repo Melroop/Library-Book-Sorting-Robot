@@ -119,9 +119,9 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
         rightGripper.model.animate(qClose);
         % move book
         bookPos = robot.model.fkine(robot.model.getpos()).T;
-        if i <= 50
+        if i <= (steps2/2)
             bookPos(3,4) = bookPos(3,4) - gripperOffset;
-        elseif i <= 65
+        elseif i <= ((13*steps2)/20)
             bookPos(3,4) = bookPos(3,4) - gripperOffset*0.5;
             bookPos(1,4) = bookPos(1,4) + gripperOffset*0.5;
         else
@@ -148,9 +148,9 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
         rightGripper.model.animate(qClose);
         % move book
         bookPos = robot.model.fkine(robot.model.getpos()).T;
-        if i <= 50
+        if i <= (steps2/2)
             bookPos(1,4) = bookPos(1,4) + gripperOffset;
-        elseif i <= 65
+        elseif i <= ((13*steps2)/20)
             bookPos(1,4) = bookPos(1,4) + gripperOffset*0.5;
             bookPos(2,4) = bookPos(2,4) + gripperOffset*0.5;
         else
