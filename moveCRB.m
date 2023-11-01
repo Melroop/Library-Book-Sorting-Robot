@@ -42,8 +42,14 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     trajArmOut = jtraj(qPlace,qArmOut,steps2);
     trajStart = jtraj(qArmOut,qStart,steps2);
 
+    % Initialize cumulative time
+    cumulativeTime = 0;
+
+    % Start timing for the current book
+    bookStartTime = tic;
+
     % Collision Check (0 = no collision)
-    disp("Checking Collision...");
+    disp(['CHECKING COLLISION...', newline]);
     collisionIndex = collisionDetection(robot,trajBookOver);
     if collisionIndex == 0
         collisionIndex = collisionDetection(robot,trajPickup);
@@ -68,9 +74,11 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     end
 
     %% Moving
+    posNum = 1;
+    
     if collisionIndex == 0
         % Display
-        disp("No Collision Detected. Moving Book.");
+        disp(['No Collision Detected. Moving Book.', newline]);
         
         % Move arm over book
         for i = 1:steps2
@@ -85,8 +93,9 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             drawnow();
             pause(0)
         end
-    
-        crbLogging(robot);
+        
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Move arm to pickup book
         for i = 1:steps2
@@ -102,8 +111,9 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
-    
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
+
         % Close Gripper
         for i = 1:steps1
             leftGripper.model.animate(qClosing(i,:));
@@ -132,7 +142,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Move arm to middle position
         for i = 1:steps2
@@ -160,8 +171,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
-    
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Move arm outside shelf slot
         for i = 1:steps2
@@ -189,7 +200,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Place book on shelf
         for i = 1:steps2
@@ -210,7 +222,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Open Gripper
         for i = 1:steps1
@@ -235,7 +248,8 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
             
-        crbLogging(robot);
+        crbLogging(robot, posNum);
+        posNum = posNum + 1;
     
         % Move arm back to starting position
         for i = 1:steps2
@@ -251,15 +265,25 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
             pause(0)
         end
     
-        crbLogging(robot);
+        crbLogging(robot, posNum);
     else
         disp("Collision Detected. Aborting Motion.");
     end
+
+    % End timing for the current book and calculate elapsed time
+    bookEndTime = toc(bookStartTime);
+    cumulativeTime = cumulativeTime + bookEndTime;
+
+    % Display the cumulative time for the current book
+    disp(['Cumulative Time for Moving Books: ', num2str(cumulativeTime), ' seconds', newline]);
 end
 
-function crbLogging(robot)
+function crbLogging(robot, num)
+    joint = robot.model.getpos();
+    disp(['CRB15000 Joint State ', num2str(num), ':']);
+    disp(joint);
     XYZ = transl(robot.model.fkine(robot.model.getpos()));
-    disp("CRB15000 End-Effector Position: ");
+    disp(['CRB15000 End-Effector Position ', num2str(num), ':']);
     disp(['X: ', num2str(XYZ(1,1))]);
     disp(['Y: ', num2str(XYZ(1,2))]);
     disp(['Z: ', num2str(XYZ(1,3)), newline]);

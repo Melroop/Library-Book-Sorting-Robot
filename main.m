@@ -22,11 +22,12 @@ classdef main < handle
     methods (Static)
         function mainFunction()
             %% Display Setup
-            clear all;
+            clf;
+            clc;
             set(0,'DefaultFigureWindowStyle','normal')
 
             % Whole Environment Axis
-            axis([-2,2,-2,2,-0.1,3.5]);
+            axis([-5,10,-5,5,0,4]);
             hold on;
 
             %% Safe Workspace Environment Setup
@@ -119,10 +120,6 @@ classdef main < handle
             ur3.model.animate(q0ur3);
             crb.model.animate(q0crb);
 
-            %             % Teach Test
-            % crb.model.teach(q0crb);
-            %             ur3.model.teach(q0ur3);
-
             %% CRB Gripper Setup
             leftJGP = JGPLeft;
             leftJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(-pi/2);
@@ -139,8 +136,6 @@ classdef main < handle
             X0 = rfkineT(1, 4);
             Y0 = rfkineT(2, 4);
             Z0 = rfkineT(3, 4);
-            disp('UR3 end effector pose: ');
-            disp(rfkine);
 
             % Create the scanner object at the initial end effector position
             scanner = PlaceObject('barcodescanner5.ply', [X0, Y0, Z0]);
@@ -153,6 +148,7 @@ classdef main < handle
 
             %% Moving Books
             for i = 1:numBooks
+                disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
                 ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
 %                 ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
                 moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
@@ -160,10 +156,11 @@ classdef main < handle
             end
 
             %% Forced Collision Detection
+            disp(['Simulating forced collision.', newline]);
             forcedCollision(ur3,crb);
             
             %% Complete
-            disp([newline,'Complete. Press ENTER to exit.'])
+            disp([newline,'SYSTEM COMPLETE. Press ENTER to exit.'])
             pause();
 
         end

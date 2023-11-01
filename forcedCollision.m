@@ -13,7 +13,7 @@ function forcedCollision(robot1,robot2)
     trajCRB = jtraj(qCRBStart,qCRBCollision,50);
 
     % Collision Check
-    disp('Checking UR3 and CRB Collision...');
+    disp('CHECKING UR3 & CRB15000 COLLISION...');
     collisionIndexUR3 = collisionDetection(robot1,trajUR3);
     collisionIndexCRB = collisionDetection(robot2,trajCRB);
     
@@ -25,8 +25,8 @@ function forcedCollision(robot1,robot2)
     end
 
     if collisionIndexCRB == 1
-        disp('CRB Collision Detected. Aborting Motion');
+        disp('CRB15000 Collision Detected. Aborting Motion');
     else
-        disp('No CRB Collision Detected. Continuing Motion');
+        disp('No CRB15000 Collision Detected. Continuing Motion');
     end
 end
