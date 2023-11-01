@@ -1,14 +1,6 @@
 function safetyworkspace()
-    clc;
-    clf;
-    clear all; 
-    
     axis([-5,10,-5,5,0,4]);
     hold on;
-    
-    xlabel ('X');
-    ylabel ('Y');
-    zlabel ('Z');
 
     % Carpet
     surf([-3.5,9;-3.5,9],[-4.5,-4.5;4,4],[0.0,0.0;0.0,0.0],'CData',imread('carpet.jpg'),'FaceColor','texturemap');
@@ -18,7 +10,6 @@ function safetyworkspace()
     % https://grabcad.com/library/bookshelf-65
     % https://grabcad.com/library/safety-light-curtain-1
     % Library Walls, Bookshelves, EStop
-    
     library = PlaceObject('Librarybase.ply',[0,0,0]);
     libraryvert = [get(library,'Vertices'), ones(size(get(library,'Vertices'),1),1)];
     set(library,'Vertices',libraryvert(:,1:3))
@@ -49,6 +40,4 @@ function safetyworkspace()
     % light = PlaceObject('LightTower.ply',[0,0,0]);
     % lightvert = [get(light,'Vertices'), ones(size(get(light,'Vertices'),1),1)];
     % set(light,'Vertices',lightvert(:,1:3))
-
-    % hold off;
 end
