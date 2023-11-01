@@ -36,6 +36,12 @@ function safetyworkspace()
     curtainvert = [get(curtain,'Vertices'), ones(size(get(curtain,'Vertices'),1),1)];
     set(curtain,'Vertices',curtainvert(:,1:3))
 
+    % Caution Sign
+    % https://www.thingiverse.com/thing:5360584
+    caution = PlaceObject('CautionSign.ply',[3,1,0]);
+    cautionvert = [get(caution,'Vertices'), ones(size(get(caution,'Vertices'),1),1)];
+    set(caution,'Vertices',cautionvert(:,1:3))
+
     % % Light Tower
     % light = PlaceObject('LightTower.ply',[0,0,0]);
     % lightvert = [get(light,'Vertices'), ones(size(get(light,'Vertices'),1),1)];
