@@ -92,9 +92,7 @@ function collisionIndex = collisionDetection(robot, qMatrix)
     centerpnt7 = [0.498,0.89,1.51];
     [bookV7,bookF7,bookFN7] = Prism(centerpnt7,bookLength2,bookWidth1,bookHeight1,plotOptions);
     
-    %% Collision Check
-    % 0 = no collision
-    
+    %% Collision Check (0 = no collision)
     % Trolley Check
     if IsCollision(robot.model,qMatrix,trolleyF1,trolleyV1,trolleyFN1)
         collisionIndex = 1;
@@ -144,15 +142,4 @@ function collisionIndex = collisionDetection(robot, qMatrix)
     else
         collisionIndex = 0;
     end 
-    
-    %% Continue Animation
-    if collisionIndex == 0
-        disp('ALL PASS. No collision found');
-        for i = 1:50
-            robot.model.animate(qMatrix(i,:));
-            pause(0)
-        end
-    else
-        disp('Collision detected!!');
-    end
 end
