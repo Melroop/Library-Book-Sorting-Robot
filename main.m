@@ -1,7 +1,7 @@
 %% 41013 Lab Assignment 2
 % 13925490 - Edan Anonuevo
 % 14250599 - Melroop Nijjar
-% - Phu Minh Quang Pham
+% 14231688 - Phu Minh Quang Pham
 
 
 %% Main file to call all the functions
@@ -160,8 +160,9 @@ classdef main < handle
             end
 
             %% Forced Collision Detection
+            forcedCollision(ur3,crb);
             
-
+            %% Complete
             disp([newline,'Complete. Press ENTER to exit.'])
             pause();
 

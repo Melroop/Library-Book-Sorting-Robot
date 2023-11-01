@@ -1,14 +1,5 @@
 function collisionIndex = collisionDetection(robot, qMatrix)
-%     clf;
-%     clear all;
     hold on;
-    
-    % safetyworkspace();
-    % axis([-2,2,-1.3,2,-0.1,3.5]);
-    % PlaceObject('Bookshelf.ply',[-0.01,0.8,0]);
-    
-    % trolley = PlaceObject('Trolley.ply',[-0.15,0.0,0]);
-    
     plotOptions.plotFaces = false;
     
     %% Trolley Collision Models
@@ -53,7 +44,6 @@ function collisionIndex = collisionDetection(robot, qMatrix)
     bookshelfLength2 = 0.04;
     bookshelfLength3 = 2.05;
     bookshelfWidth1 = 0.34;
-%     bookshelfWidth2 = 0.00;
     bookshelfHeight1 = 3.05; 
     bookshelfHeight2 = 0.04; 
     
@@ -101,28 +91,6 @@ function collisionIndex = collisionDetection(robot, qMatrix)
     [bookV6,bookF6,bookFN6] = Prism(centerpnt6,bookLength3,bookWidth1,bookHeight1,plotOptions);
     centerpnt7 = [0.498,0.89,1.51];
     [bookV7,bookF7,bookFN7] = Prism(centerpnt7,bookLength2,bookWidth1,bookHeight1,plotOptions);
-    
-    %% Setup
-    % crb = CRB15000;
-    % 
-    % robot.model.base = transl(-0.20, 0.20, 0.95);
-    % q0crb = robot.model.getpos();
-    % robot.model.animate(q0crb);
-    % 
-    % qBook = [-0.1995, 0.8009, 0.4641, -0.2992, 0.3491, 0];
-    % qCollision1 = [0, 2.5681, -2.7676, -0.2992, 0.3491, 0];
-    % qCollision2 = [0.1995, 0.8477, 1.0327, -0.2992, 0.3491, 0];
-    % qCollision3 = [-2.3188, 1.4461, -0.4273, -0.2743, 0.4987, -0.8602];
-    % qShelf = [1.5708, -0.3491, 0.8727, 0, -0.5236, 0];
-    
-    % robot.model.teach(qCollision1);
-    
-    % qMatrix = jtraj(qBook,qShelf,50);
-    
-    % for i = 1:50
-    %     robot.model.animate(qMatrix(i,:));
-    %     pause(0)
-    % end
     
     %% Collision Check
     % 0 = no collision
@@ -178,13 +146,13 @@ function collisionIndex = collisionDetection(robot, qMatrix)
     end 
     
     %% Continue Animation
-%     if collisionIndex == 0
-%         disp('ALL PASS. No collision found');
-%     %     for i = 1:50
-%     %         robot.model.animate(qMatrix(i,:));
-%     %         pause(0)
-%     %     end
-%     else
-%         disp('Collision detected!!');
-%     end
+    if collisionIndex == 0
+        disp('ALL PASS. No collision found');
+        for i = 1:50
+            robot.model.animate(qMatrix(i,:));
+            pause(0)
+        end
+    else
+        disp('Collision detected!!');
+    end
 end
