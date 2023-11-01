@@ -70,7 +70,7 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     %% Moving
     if collisionIndex == 0
         % Display
-        disp("No Collision Detected. Continuing Motion.");
+        disp("No Collision Detected. Moving Book.");
         
         % Move arm over book
         for i = 1:steps2
@@ -253,7 +253,7 @@ function moveCRB(robot,leftGripper,rightGripper,pickupPosition,placePosition,boo
     
         crbLogging(robot);
     else
-        disp("Collision Detected. Aborting Motion");
+        disp("Collision Detected. Aborting Motion.");
     end
 end
 
