@@ -14,7 +14,7 @@ function ur3scanningRMRC(ur3, q0ur3, bookStack, scanner, verts, scannerinitPose)
 
     qBook1 = deg2rad([5, -163, -66, -45, 96, 0]);
     cumulativeTime = 0;
-
+    bookStartTime = 0;
     % Iterate through all the books, one after another
     for i = 1:numRows
         bookinitPosition = bookStack(i, :);
@@ -28,9 +28,9 @@ function ur3scanningRMRC(ur3, q0ur3, bookStack, scanner, verts, scannerinitPose)
         % Check if scanstatus is true and it's the current book's turn
         % if scanstatus == true
         steps = 95;
-
+        bookStartTime = tic;
         x1 = [X0; Y0; Z0; 0; 0; 0];  % Define the initial pose for RMRC
-        x2 = [bookcompletePosition'; 0; 0; 0] * flipMatrix;  % Define the final pose for RMRC
+        x2 = [bookcompletePosition'; 0; 0; 0];  % Define the final pose for RMRC
         deltaT = 0.05;
 
         x = zeros(6, steps);
