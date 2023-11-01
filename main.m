@@ -1,8 +1,7 @@
-%% 41013 Lab Assignment 2
+%% 41013 Lab Assignment 2 - Library Book Sorting Robot
 % 13925490 - Edan Anonuevo
 % 14250599 - Melroop Nijjar
 % 14231688 - Phu Minh Quang Pham
-
 
 %% Main file to call all the functions
 classdef main < handle
@@ -40,8 +39,7 @@ classdef main < handle
             for i = 1:numBooks
                 book{i} = Book; 
             end
-
-            % Book positions
+            % Book initial positions
             bookStack = [
                 0.45,0.30,0.74;
                 0.45,0.24,0.74;
@@ -55,7 +53,7 @@ classdef main < handle
                 0.45,-0.24,0.74;
                 0.45,-0.30,0.74;
                 ];
-
+            % Book final positions
             bookShelf = [
                 0.24,0.75,1.51;
                 0.18,0.75,1.51;
@@ -69,7 +67,6 @@ classdef main < handle
                 -0.24,0.75,2.06;
                 -0.30,0.75,2.05;
                 ];
-
             % Update book base
             for i = 1:11
                 book{i}.model.base = transl(bookStack(i,1),bookStack(i,2),bookStack(i,3));
@@ -109,48 +106,41 @@ classdef main < handle
             % Initialise robot arms
             ur3 = UR3;
             crb = CRB15000;
-
             % Update robot arms base on table
             ur3.model.base = transl(0.00, -0.25, 0.95);
             crb.model.base = transl(-0.20, 0.20, 0.95);
-
             % Re-plot robot arms
             q0ur3 = deg2rad([0,-90,-90,0,90,0]);
             q0crb = crb.model.getpos();
             ur3.model.animate(q0ur3);
             crb.model.animate(q0crb);
 
-            %% CRB Gripper Setup
+            %% JGP-P 80-1 Gripper Setup for CRB15000
+            % Initialise gripper arms
             leftJGP = JGPLeft;
-            leftJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(-pi/2);
-
             rightJGP = JGPRight;
+            % Update gripper arms base to CRB15000
+            leftJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(-pi/2);
             rightJGP.model.base = crb.model.fkine(crb.model.getpos()).T * trotx(pi/2) * trotz(pi);
-
+            % Re-plot gripper arms
             leftJGP.model.animate(-0.02);
             rightJGP.model.animate(-0.02);
 
             %% UR3 Scanner Setup
-            rfkine = ur3.model.fkine(q0ur3);
-            rfkineT = rfkine.T;
-            X0 = rfkineT(1, 4);
-            Y0 = rfkineT(2, 4);
-            Z0 = rfkineT(3, 4);
-
-            % Create the scanner object at the initial end effector position
-            scanner = PlaceObject('barcodescanner5.ply', [X0, Y0, Z0]);
+            % Get UR3 end-effector position
+            rfkineT = ur3.model.fkine(q0ur3).T;
+            % Create the scanner object at the initial end-effector position
+            scanner = PlaceObject('barcodescanner5.ply', [rfkineT(1,4), rfkineT(2,4), rfkineT(3,4)]);
             verts = [get(scanner, 'Vertices'), ones(size(get(scanner, 'Vertices'), 1), 1)];
-            verts(:, 1) = verts(:, 1);
-            set(scanner, 'Vertices', verts(:, 1:3))
             scannerinitOrientation = eye(3);
-            scannerinitPosition = [X0 Y0 Z0];
+            scannerinitPosition = [rfkineT(1,4) rfkineT(2,4) rfkineT(3,4)];
             scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
 
             %% Moving Books
             for i = 1:numBooks
                 disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
-                ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
-%                 ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
+%                 ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
+                ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
                 moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
                 pause(1)
             end
