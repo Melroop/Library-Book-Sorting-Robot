@@ -38,7 +38,7 @@ classdef teachGUI < matlab.apps.AppBase
         modelCRB % Where I will put the loaded puma
         modelUR3 % Where I will put the loaded UR5
         qCRB = [0,0,0,0,0,0];
-        qUR3 = [0,0,0,0,0,0];
+        qUR3 = deg2rad([0,-90,-90,0,90,0]);
     end
     
 
@@ -49,16 +49,16 @@ classdef teachGUI < matlab.apps.AppBase
         function init(app, varargin)
             % Code to run once GUI is loaded successfully
             ax = gca;
-            axis([-1,1,-1,1,0,1.5]);
+            axis([-1.5,1.5,-1.5,1.5,0.0,1.5]);
             hold on; 
 
             % Make, save and plot some robots            
             app.modelCRB = CRB15000; 
-            app.modelCRB.model.base = transl([0,0.25,0]);
+            app.modelCRB.model.base = transl([-0.20, 0.20, 0.00]);
             app.modelCRB.model.animate(app.qCRB);
 
             app.modelUR3 = UR3;
-            app.modelUR3.model.base = transl([0,-0.25,0]);
+            app.modelUR3.model.base = transl([0.00, -0.25, 0.00]);
             app.modelUR3.model.animate(app.qUR3);
 
             % Delete the green floor surface (need to count backwards
