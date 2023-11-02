@@ -135,6 +135,9 @@ classdef main < handle
             scannerinitOrientation = eye(3);
             scannerinitPosition = [rfkineT(1,4) rfkineT(2,4) rfkineT(3,4)];
             scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
+            scannerTransform = rfkineT * inv(scannerinitPose);  % Calculate the transformation
+            newVerts = (verts(:, 1:3) * scannerTransform(1:3, 1:3)') + scannerTransform(1:3, 4)';
+            set(scanner, 'Vertices', newVerts);
             
             %% Moving Books
             disp('ENVIRONMENT SETUP COMPLETE. Press ENTER to continue.');
