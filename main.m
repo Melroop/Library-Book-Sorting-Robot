@@ -137,17 +137,17 @@ classdef main < handle
             scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
 
             %% Moving Books
-            for i = 1:numBooks
-                disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
-                ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
-%                 ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
-%                 moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
-                pause(1)
-            end
+%             for i = 1:numBooks
+%                 disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
+%                 ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
+% %                 ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
+% %                 moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
+%                 pause(1)
+%             end
 
             %% Forced Collision Detection
             disp(['Simulating forced collision.', newline]);
-            forcedCollision(ur3,crb);
+            forcedCollision(ur3,crb,scanner, leftJGP, rightJGP);
             
             %% Complete
             disp([newline,'SYSTEM COMPLETE. Press ENTER to exit.'])
