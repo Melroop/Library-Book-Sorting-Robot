@@ -139,9 +139,9 @@ classdef main < handle
             %% Moving Books
             for i = 1:numBooks
                 disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
-%                 ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
-                ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
-                moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
+                ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
+%                 ur3scanning(ur3,q0ur3,bookStack(i,:),scanner,verts,scannerinitPose);            % Scan Book
+%                 moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});   % Move Book to Shelf
                 pause(1)
             end
 
