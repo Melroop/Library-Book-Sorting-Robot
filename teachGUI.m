@@ -49,16 +49,19 @@ classdef teachGUI < matlab.apps.AppBase
         function init(app, varargin)
             % Code to run once GUI is loaded successfully
             ax = gca;
-            axis([-1.5,1.5,-1.5,1.5,0.0,1.5]);
+            axis([-1.5,1.5,-1.5,1.5,0.0,3]);
             hold on; 
+            
+            % Trolley
+            PlaceObject('Trolley.ply',[-0.15,0.0,0]);
 
             % Make, save and plot some robots            
             app.modelCRB = CRB15000; 
-            app.modelCRB.model.base = transl([-0.20, 0.20, 0.00]);
+            app.modelCRB.model.base = transl([-0.20, 0.20, 0.95]);
             app.modelCRB.model.animate(app.qCRB);
 
             app.modelUR3 = UR3;
-            app.modelUR3.model.base = transl([0.00, -0.25, 0.00]);
+            app.modelUR3.model.base = transl([0.00, -0.25, 0.95]);
             app.modelUR3.model.animate(app.qUR3);
 
             % Delete the green floor surface (need to count backwards
