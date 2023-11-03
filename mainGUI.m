@@ -120,7 +120,7 @@ classdef mainGUI < matlab.apps.AppBase
                     break % Skip 
                 end
                 % Perform animation step
-                if ~app.animationPaused
+                if ~app.eStopActivated
                     ur3scanningRMRC(ur3, q0ur3, bookStack(i,:), scanner, verts, scannerinitPose);
                     moveCRB(crb, leftJGP, rightJGP, bookStack(i,:), bookShelf(i,:), book{i});
                     pause(1);
