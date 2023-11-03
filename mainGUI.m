@@ -143,11 +143,7 @@ classdef mainGUI < matlab.apps.AppBase
         function ESTOPButtonPushed(app, event)
             % Set the E-Stop state to true
             app.eStopActivated = true;
-            % Set the animation pause flag to true
-            app.animationPaused = true;
-            % You can add code to perform E-Stop actions here if needed
-            % For now, you can display a message
-            disp('E-Stop activated. System is paused.');
+            disp('E-Stop Activated.');
         end
 
         % Button pushed function: RESUMEButton
@@ -155,11 +151,7 @@ classdef mainGUI < matlab.apps.AppBase
             % If E-Stop is activated, deactivate it
             if app.eStopActivated
                 app.eStopActivated = false;
-                % Set the animation pause flag to false
-                app.animationPaused = false;
-                % You can add code to perform recovery actions here if needed
-                % For now, you can display a message
-                disp('E-Stop deactivated. System can now resume.');
+                disp('E-Stop Deactivated. Recovering Motion...');
             end
         end
     end
