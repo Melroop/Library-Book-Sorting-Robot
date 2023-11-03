@@ -119,7 +119,7 @@ classdef main < handle
             end
 
             %% Forced Collision Detection
-            disp('SCANNIGN & MOVING BOOKS COMPLETE. Press ENTER to continue.');
+            disp('SCANNING & MOVING BOOKS COMPLETE. Press ENTER to continue.');
             pause();
             
             disp(['Simulating Forced Collision.', newline]);
