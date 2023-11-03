@@ -9,6 +9,8 @@ function safetyworkspace()
     % https://grabcad.com/library/tag/book
     % https://grabcad.com/library/bookshelf-65
     % https://grabcad.com/library/safety-light-curtain-1
+    % https://grabcad.com/library/fire-extinguisher-support-1
+
     % Library Walls, Bookshelves, EStop
     library = PlaceObject('Librarybase.ply',[0,0,0]);
     libraryvert = [get(library,'Vertices'), ones(size(get(library,'Vertices'),1),1)];
@@ -42,8 +44,8 @@ function safetyworkspace()
     cautionvert = [get(caution,'Vertices'), ones(size(get(caution,'Vertices'),1),1)];
     set(caution,'Vertices',cautionvert(:,1:3))
 
-    % % Light Tower
-    % light = PlaceObject('LightTower.ply',[0,0,0]);
-    % lightvert = [get(light,'Vertices'), ones(size(get(light,'Vertices'),1),1)];
-    % set(light,'Vertices',lightvert(:,1:3))
+    % Fire Extinguisher and First Aid
+    safety = PlaceObject('FireandFirstAid.ply',[0,0,0]);
+    safetyvert = [get(safety,'Vertices'), ones(size(get(safety,'Vertices'),1),1)];
+    set(safety,'Vertices',safetyvert(:,1:3))
 end
