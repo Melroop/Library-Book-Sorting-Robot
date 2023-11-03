@@ -107,6 +107,9 @@ classdef mainGUI < matlab.apps.AppBase
             scannerinitPose = [scannerinitOrientation, scannerinitPosition'; 0,0,0,1];
 
             %% Moving Books
+            disp('ENVIRONMENT SETUP COMPLETE. Press ENTER to continue.');
+            pause();
+            
             for i = 1:numBooks
                 disp(['SCANNING & MOVING BOOK #', num2str(i), newline]);
                 % Check if E-Stop is activated
@@ -125,6 +128,9 @@ classdef mainGUI < matlab.apps.AppBase
             end
 
             %% Forced Collision Detection
+            disp('SCANNING & MOVING BOOKS COMPLETE. Press ENTER to continue.');
+            pause();
+            
             disp(['Simulating forced collision.', newline]);
             forcedCollision(ur3,crb,scanner, leftJGP, rightJGP);
 
